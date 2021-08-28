@@ -53,6 +53,8 @@ foreign kernel32 {
                                 lpConsoleCursorInfo: ^CONSOLE_CURSOR_INFO) -> windows.BOOL ---;
     SetConsoleCursorPosition :: proc(hConsoleOutput: windows.HANDLE, dwCursorPosition: COORD) -> windows.BOOL ---;
     SetConsoleTextAttribute :: proc(hConsoleOutput: windows.HANDLE, wAttributes: windows.WORD) -> windows.BOOL ---;
+
+    _getch :: proc() -> windows.INT ---;
 }
 
 // ----- ncure stuff -----

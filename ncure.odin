@@ -11,8 +11,19 @@ when ODIN_OS == "windows" {
 TermSize :: common.TermSize;
 CursorPos :: common.CursorPos;
 
-write_string_nocolor :: proc(s: string) {
-    os.write_string(os.stdout, s);
+write_string_nocolor :: proc(s: string, moveCursor := true) {
+	if !moveCursor {
+		when ODIN_OS == "windows" {
+			// TODO
+			cursor := getCursor();
+			write_string_at_nocolor(cursor, s);
+		} else {
+			os.write_string(os.stdout, s);
+			moveCursor_left(len(s)); // TODO: Doesn't take into account unicode
+		}
+	} else {
+    	os.write_string(os.stdout, s);
+	}
 }
 
 write_string_at_nocolor :: proc(cursor: CursorPos, s: string) {
@@ -138,8 +149,14 @@ write_line_at_color :: proc(cursor: CursorPos, fg: ForegroundColor, s: string) {
 
 write_line :: proc{write_line_nocolor, write_line_color, write_line_at_nocolor, write_line_at_color};
 
-write_byte_current :: proc(b: byte) {
-    os.write_byte(os.stdout, b);
+write_byte_current :: proc(b: byte, moveCursor := true) {
+	if !moveCursor {
+		// TODO
+		cursor := getCursor();
+		write_byte_at(cursor, b);
+	} else {
+    	os.write_byte(os.stdout, b);
+	}
 }
 
 write_byte_at :: proc(cursor: CursorPos, b: byte) {

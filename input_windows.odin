@@ -1,29 +1,35 @@
 package ncure
 
+import "common"
 import "core:os"
 import "core:fmt"
 
 Input :: enum i32 {
 	CTRL_C = 3,
+	CTRL_D = 4,
 	CTRL_L = 12,
 	CTRL_O = 15,
 	CTRL_X = 24,
 	ESC = 27,
-	BACKSPACE = '\b', // TODO
-	ENTER = 10,
+	BACKSPACE = 8,
+	//ENTER = 10,
+	ENTER = 13,
+	CTRL_BACKSPACE = 23,
+	SHIFT_BACKSPACE = 127,
 
 	SPECIAL1 = -32, // TODO
 	SPECIAL2 = 224,
 
-	LEFT = 75,
-	UP = 76,
+	LEFT = 75, // TODO: Add CTRL_LEFT and CTRL_RIGHT
+	UP = 72,
+	PAGE_UP = 73,
 	RIGHT = 77,
-	DOWN = 78,
+	DOWN = 80,
+	PAGE_DOWN = 81,
 	DELETE = 83,
 	END = 79,
 	HOME = 71,
 	ENDINPUT = 26, // Ctrl+Z
-	CTRL_BACKSPACE = 8,
 }
 
 isSpecial :: proc(c: byte) -> bool {
@@ -101,9 +107,9 @@ disableBlocking :: proc() {
 }
 
 getch :: proc() -> (byte) {
-	data: [1]byte;
+	/*data: [1]byte;
 	if bytes_read, _ := os.read(os.stdin, data[:]); bytes_read < 0 {
 		fmt.println("Error reading Input");
-	}
-	return data[0];
+	}*/
+	return /*data[0]*/ cast(byte) common._getch();
 }
