@@ -4,7 +4,7 @@ import "core:os"
 import "core:fmt"
 import "common"
 
-when ODIN_OS == "windows" {
+when ODIN_OS == .Windows {
 	import "core:sys/windows"
 }
 
@@ -13,7 +13,7 @@ CursorPos :: common.CursorPos;
 
 write_string_nocolor :: proc(s: string, moveCursor := true) {
 	if !moveCursor {
-		when ODIN_OS == "windows" {
+		when ODIN_OS == .Windows {
 			// TODO
 			cursor := getCursor();
 			write_string_at_nocolor(cursor, s);
@@ -27,7 +27,7 @@ write_string_nocolor :: proc(s: string, moveCursor := true) {
 }
 
 write_string_at_nocolor :: proc(cursor: CursorPos, s: string) {
-	when ODIN_OS == "windows" {
+	when ODIN_OS == .Windows {
 		if !_ansiMode {
 			utf16str := windows.utf8_to_utf16(s, context.temp_allocator);
 			defer delete(utf16str, context.temp_allocator);
@@ -62,7 +62,7 @@ write_string_color :: proc(fg: ForegroundColor, s: string) {
 }
 
 write_string_at_color :: proc(cursor: CursorPos, fg: ForegroundColor, s: string) {
-	when ODIN_OS == "windows" {
+	when ODIN_OS == .Windows {
 		if !_ansiMode {
 			utf16str := windows.utf8_to_utf16(s, context.temp_allocator);
 			defer delete(utf16str, context.temp_allocator);
