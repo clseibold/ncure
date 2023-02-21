@@ -253,9 +253,7 @@ getTermSize :: proc() -> (termSize: TermSize) {
 getCursor :: proc() -> CursorPos {
 	cursor: CursorPos;
 	
-	// Disable Echo, send request, then switch terminal
-	// back to previous settings
-    // TODO: Make this part OS-agnostic so getCursor can be moved back into vt100 package
+	// Disable Echo, send request, then switch terminal back to previous settings
 	prev, _ := disableEcho(false);
 	os.write_string(os.stdout, GET_CURSOR);
 	if set_error := tcsetattr(os.stdin, TCSANOW, &prev); set_error != os.ERROR_NONE {
