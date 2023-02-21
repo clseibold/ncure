@@ -12,6 +12,8 @@ when ODIN_OS == .Windows {
 Input :: common.Input;
 isSpecial :: common.isSpecial;
 isDelete :: common.isDelete;
+enableRawMode :: common.enableRawMode;
+disableRawMode :: common.disableRawMode;
 enableEcho :: common.enableEcho;
 disableEcho :: common.disableEcho;
 enableBlocking :: common.enableBlocking;

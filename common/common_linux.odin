@@ -67,7 +67,7 @@ IMAXBEL :: 0020000;
 IUTF8 :: 0040000;
 
 /* c_oflag bits */
-OPOST :: 0000001;
+OPOST: tcflag_t : 0000001;
 OLCUC :: 0000002;
 ONLCR :: 0000004;
 OCRNL :: 0000010;
@@ -164,17 +164,17 @@ __MAX_BAUD :: B4000000;
 // #endif
 
 /* c_lflag bits */
-ISIG :: 0000001;
+ISIG: tcflag_t : 0000001;
 ICANON: tcflag_t : 0000002;
 // #if defined __USE_MISC || (defined __USE_XOPEN && !defined __USE_XOPEN2K)
 // # define XCASE        0000004
 // #endif
 ECHO: tcflag_t : 0000010;
-ECHOE :: 0000020;
-ECHOK :: 0000040;
-ECHONL :: 0000100;
-NOFLSH :: 0000200;
-TOSTOP :: 0000400;
+ECHOE: tcflag_t : 0000020;
+ECHOK: tcflag_t : 0000040;
+ECHONL: tcflag_t : 0000100;
+NOFLSH: tcflag_t : 0000200;
+TOSTOP: tcflag_t : 0000400;
 /*#ifdef __USE_MISC
 # define ECHOCTL 0001000
 # define ECHOPRT 0002000
@@ -182,7 +182,7 @@ TOSTOP :: 0000400;
 # define FLUSHO         0010000
 # define PENDIN         0040000
 #endif*/
-IEXTEN :: 0100000;
+IEXTEN: tcflag_t : 0100000;
 /*#ifdef __USE_MISC
 # define EXTPROC 0200000
 #endif*/

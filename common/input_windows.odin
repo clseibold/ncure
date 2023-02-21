@@ -49,6 +49,14 @@ isDelete :: proc(c: byte) -> bool {
 	return false;
 }
 
+// Note: Not implemented for Windows.
+enableRawMode :: proc(nonblocking := false) {
+}
+
+// Note: Not implemented for Windows.
+disableRawMode :: proc(nonblocking := false) {
+}
+
 
 disableEcho :: proc(nonblocking := false) {
 	/*if get_error := linux.tcgetattr(os.stdin, &prev); get_error != os.ERROR_NONE {

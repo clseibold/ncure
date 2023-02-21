@@ -56,6 +56,66 @@ isDelete :: proc(c: byte) -> bool {
 	return false;
 }
 
+// Full raw mode that disables echo, canonical mode, and various keyboard shortcuts.
+enableRawMode :: proc(nonblocking := false) -> (prev: termios, current: termios) {
+	if get_error := tcgetattr(os.stdin, &prev); get_error != os.ERROR_NONE {
+		// Error
+		fmt.println("Error getting terminal info: %s\n", get_error);
+	}
+
+	current = prev;
+	
+	current.c_lflag &= ~ICANON;
+	current.c_lflag &= ~ECHO;
+	current.c_lflag &= ~ISIG; // Disable Ctrl+C and Ctrl+Z
+	current.c_lflag &= ~IXON; // Disable Ctrl+S and Ctrl+Q
+	current.c_lflag &= ~IEXTEN; // Disable Ctrl+V
+	current.c_lflag &= ~ICRNL; // Carriage returns don't get translated into new lines.
+	current.c_lflag &= ~OPOST; // Turn off all Output Processing. Newline characters will not move the cursor to the start of the next line.
+	current.c_lflag &= ~(BRKINT | INPCK | ISTRIP);
+	//current.c_lflag |= CS8; // Sets character size to 8 bits per byte
+
+	if nonblocking do current.c_cc[VMIN] = 0;
+	else do current.c_cc[VMIN] = 1;
+	current.c_cc[VTIME] = 0;
+
+	if set_error := tcsetattr(os.stdin, TCSANOW, &current); set_error != os.ERROR_NONE {
+		fmt.println("Error setting terminal info: %s\n", set_error);
+	}
+
+	return prev, current;
+}
+
+// Full raw mode that disables echo, canonical mode, and various keyboard shortcuts.
+disableRawMode :: proc(nonblocking := false) -> (prev: termios, current: termios) {
+	if get_error := tcgetattr(os.stdin, &prev); get_error != os.ERROR_NONE {
+		// Error
+		fmt.println("Error getting terminal info: %s\n", get_error);
+	}
+
+	current = prev;
+	
+	current.c_lflag |= ICANON;
+	current.c_lflag |= ECHO;
+	current.c_lflag |= ISIG; // Re-enables Ctrl+C and Ctrl+Z
+	current.c_lflag |= IXON; // Re-enables Ctrl+S and Ctrl+Q
+	current.c_lflag |= IEXTEN; // Re-enables Ctrl+V
+	current.c_lflag |= ICRNL; // Carriage returns get translated into new lines.
+	current.c_lflag |= OPOST; // Turn on all Output Processing. Newline characters will not move the cursor to the start of the next line.
+	current.c_lflag |= (BRKINT | INPCK | ISTRIP);
+	//current.c_lflag &= ~CS8; // Disables setting the character size to 8 bits per byte
+
+	/*if nonblocking do current.c_cc[VMIN] = 0;
+	else do current.c_cc[VMIN] = 1;
+	current.c_cc[VTIME] = 0;*/
+
+	if set_error := tcsetattr(os.stdin, TCSANOW, &current); set_error != os.ERROR_NONE {
+		fmt.println("Error setting terminal info: %s\n", set_error);
+	}
+
+	return prev, current;
+}
+
 disableEcho :: proc(nonblocking := false) -> (prev: termios, current: termios) {
 	if get_error := tcgetattr(os.stdin, &prev); get_error != os.ERROR_NONE {
 		// Error
