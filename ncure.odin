@@ -8,6 +8,16 @@ when ODIN_OS == .Windows {
 	import "core:sys/windows"
 }
 
+// Input stuff
+Input :: common.Input;
+isSpecial :: common.isSpecial;
+isDelete :: common.isDelete;
+enableEcho :: common.enableEcho;
+disableEcho :: common.disableEcho;
+enableBlocking :: common.enableBlocking;
+disableBlocking :: common.disableBlocking;
+getch :: common.getch;
+
 TermSize :: common.TermSize;
 CursorPos :: common.CursorPos;
 

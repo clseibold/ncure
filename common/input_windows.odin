@@ -1,49 +1,57 @@
-package ncure
+package ncure_common
 
-import "core:fmt"
 import "core:os"
-when ODIN_OS == "linux" { import "../linux" }
+import "core:fmt"
 
-Input :: enum u8 {
+Input :: enum i32 {
 	CTRL_C = 3,
 	CTRL_D = 4,
-	END_INPUT = 4,
-	CTRL_BACKSPACE = 8,
-	ENTER = 10,
 	CTRL_L = 12,
 	CTRL_O = 15,
 	CTRL_X = 24,
-	CTRL_Z = 26,
 	ESC = 27,
+	BACKSPACE = 8,
+	//ENTER = 10,
+	ENTER = 13,
+	CTRL_BACKSPACE = 23,
+	SHIFT_BACKSPACE = 127,
 
-	SPECIAL1 = 27,
-	SPECIAL2 = 91,
-	LEFT = 68,
-	RIGHT = 67,
-	UP = 65,
-	DOWN = 66,
-	DELETE1 = 51,
-	DELETE2 = 126,
-	END = 70,
-	HOME = 72,
-	BACKSPACE = 127
+	SPECIAL1 = -32, // TODO
+	SPECIAL2 = 224,
+
+	LEFT = 75, // TODO: Add CTRL_LEFT and CTRL_RIGHT
+	UP = 72,
+	PAGE_UP = 73,
+	RIGHT = 77,
+	DOWN = 80,
+	PAGE_DOWN = 81,
+	DELETE = 83,
+	END = 79,
+	HOME = 71,
+	ENDINPUT = 26, // Ctrl+Z
 }
 
 isSpecial :: proc(c: byte) -> bool {
-	if Input(c) == Input.SPECIAL1 {
-		next := getch();
-		if Input(next) == Input.SPECIAL2 {
-			return true;
-		} else {
-			// TODO
-		}
+	if cast(i32) c == cast(i32) Input.SPECIAL1 || cast(i32) c == cast(i32) Input.SPECIAL2 {
+		return true;
 	}
 
 	return false;
 }
 
-disableEcho :: proc(nonblocking := false) -> (prev: linux.termios, current: linux.termios) {
-	if get_error := linux.tcgetattr(os.stdin, &prev); get_error != os.ERROR_NONE {
+// Must go inside an isSpecial
+// This function exists so that Linux is compatible.
+isDelete :: proc(c: byte) -> bool {
+	if Input(c) == Input.DELETE {
+		return true;
+	}
+
+	return false;
+}
+
+
+disableEcho :: proc(nonblocking := false) {
+	/*if get_error := linux.tcgetattr(os.stdin, &prev); get_error != os.ERROR_NONE {
 		// Error
 		fmt.println("Error getting terminal info: %s\n", get_error);
 	}
@@ -59,11 +67,11 @@ disableEcho :: proc(nonblocking := false) -> (prev: linux.termios, current: linu
 		fmt.println("Error setting terminal info: %s\n", set_error);
 	}
 
-	return prev, current;
+	return prev, current;*/
 }
 
 enableEcho :: proc() {
-	term: linux.termios;
+	/*term: linux.termios;
 	if get_error := linux.tcgetattr(os.stdin, &term); get_error != os.ERROR_NONE {
 		// Error
 		fmt.println("Error getting terminal info: %s\n", get_error);
@@ -74,11 +82,11 @@ enableEcho :: proc() {
 
 	if set_error := linux.tcsetattr(os.stdin, linux.TCSANOW, &term); set_error != os.ERROR_NONE {
 		fmt.println("Error setting terminal info: %s\n", set_error);
-	}
+	}*/
 }
 
 enableBlocking :: proc() {
-	term: linux.termios;
+	/*term: linux.termios;
 	if get_error := linux.tcgetattr(os.stdin, &term); get_error != os.ERROR_NONE {
 		// Error
 		fmt.println("Error getting terminal info: %s\n", get_error);
@@ -89,11 +97,11 @@ enableBlocking :: proc() {
 
 	if set_error := linux.tcsetattr(os.stdin, linux.TCSANOW, &term); set_error != os.ERROR_NONE {
 		fmt.println("Error setting terminal info: %s\n", set_error);
-	}
+	}*/
 }
 
 disableBlocking :: proc() {
-	term: linux.termios;
+	/*term: linux.termios;
 	if get_error := linux.tcgetattr(os.stdin, &term); get_error != os.ERROR_NONE {
 		// Error
 		fmt.println("Error getting terminal info: %s\n", get_error);
@@ -104,15 +112,13 @@ disableBlocking :: proc() {
 
 	if set_error := linux.tcsetattr(os.stdin, linux.TCSANOW, &term); set_error != os.ERROR_NONE {
 		fmt.println("Error setting terminal info: %s\n", set_error);
-	}
+	}*/
 }
 
 getch :: proc() -> (byte) {
-	data: [1]byte;
+	/*data: [1]byte;
 	if bytes_read, _ := os.read(os.stdin, data[:]); bytes_read < 0 {
 		fmt.println("Error reading Input");
-	}
-	return data[0];
+	}*/
+	return /*data[0]*/ cast(byte) _getch();
 }
-
-

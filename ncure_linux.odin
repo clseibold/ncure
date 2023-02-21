@@ -100,3 +100,8 @@ disableAnsiMode :: proc() {}
 disableVT100Mode :: disableAnsiMode;
 setAnsiMode :: proc(on: bool) {}
 setVT100Mode :: setAnsiMode;
+
+ForegroundColor :: common.ForegroundColor;
+BackgroundColor :: common.BackgroundColor;
+setColor :: common.setColor;
+resetColors :: common.resetColors;

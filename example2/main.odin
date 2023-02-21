@@ -3,17 +3,18 @@ package main
 
 import ncure ".."
 import "core:strings"
-import "core:container"
+import queue "core:container/queue"
 
 InputData :: struct {
     prompt: string,
     running: bool,
-    inputHistory: container.Queue(string),
+    inputHistory: queue.Queue(string),
     history_index: int,
     cursorPos: int,
 }
 createInputData :: proc(inputData: ^InputData) {
-    container.queue_init(&inputData.inputHistory, 0, 5);
+    //queue.init(&inputData.inputHistory, 0, 5);
+    queue.init(&inputData.inputHistory, 5);
     inputData.history_index = 0;
     inputData.cursorPos = 0;
 }
@@ -24,8 +25,8 @@ main :: proc() {
     ncure.disableEcho();
     defer ncure.enableEcho();
 
-    input := strings.make_builder();
-	defer strings.destroy_builder(&input);
+    input := strings.builder_make();
+	defer strings.builder_destroy(&input);
 
     inputData: InputData;
     createInputData(&inputData);
@@ -42,14 +43,14 @@ setPrompt :: proc(prompt: string, inputData: ^InputData) {
 // NOTE: Doesn't currently support any unicode. ASCII only.
 cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
     printPrompt(inputData);
-    strings.reset_builder(input);
+    strings.builder_reset(input);
     data: byte;
     for {
         data = ncure.getch();
         
         if ncure.Input(data) == ncure.Input.CTRL_C {
             inputData.running = false;
-            strings.reset_builder(input);
+            strings.builder_reset(input);
             break;
         } else if ncure.Input(data) == ncure.Input.BACKSPACE {
             if len(input.buf) <= 0 do continue;
@@ -58,7 +59,7 @@ cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
                 prev_before := string(input.buf[:inputData.cursorPos - 1]);
                 //prev_after := strings.clone(string(input.buf[inputData.cursorPos:]), context.temp_allocator);
                 prev_after := string(input.buf[inputData.cursorPos:]);
-                strings.reset_builder(input);
+                strings.builder_reset(input);
                 strings.write_string(input, prev_before);
                 strings.write_string(input, prev_after);
                 inputData.cursorPos -= 1;
@@ -94,7 +95,7 @@ cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
             // Delete stuff from builder
             prev_before := string(input.buf[:last_whitespace_index]);
             prev_after := string(input.buf[inputData.cursorPos:]);
-            strings.reset_builder(input);
+            strings.builder_reset(input);
             strings.write_string(input, prev_before);
             strings.write_string(input, prev_after);
 
@@ -124,17 +125,17 @@ cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
         } else if ncure.isSpecial(data) {
             data = ncure.getch();
             
-            handleHistory :: proc(input: ^strings.Builder, using inputData: ^InputData) {
+            handleHistory :: proc(input: ^strings.Builder, inputData: ^InputData) {
                 old_rune_count := strings.rune_count(string(input.buf[:]));
                 
-                if history_index > 0 && history_index <= container.queue_len(inputHistory) {
-                    hist_str := container.queue_get(inputHistory, container.queue_len(inputHistory) - (history_index));
-                    strings.reset_builder(input);
+                if inputData.history_index > 0 && inputData.history_index <= queue.len(inputData.inputHistory) {
+                    hist_str := queue.get(&inputData.inputHistory, queue.len(inputData.inputHistory) - (inputData.history_index));
+                    strings.builder_reset(input);
                     strings.write_string(input, hist_str);
                     ncure.backspace(old_rune_count);
                     ncure.write_string(string(input.buf[:]));
-                } else if history_index <= 0 {
-                    strings.reset_builder(input);
+                } else if inputData.history_index <= 0 {
+                    strings.builder_reset(input);
                     ncure.backspace(old_rune_count);
                 }
             }
@@ -143,7 +144,7 @@ cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
                 data = ncure.getch();
             }
             if ncure.Input(data) == ncure.Input.UP {
-                if inputData.history_index < container.queue_len(inputData.inputHistory) {
+                if inputData.history_index < queue.len(inputData.inputHistory) {
                     // Move cursor to end first
                     prevCursor := inputData.cursorPos;
                     inputData.cursorPos = strings.builder_len(input^);
@@ -182,14 +183,14 @@ cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
                 prevCursor := inputData.cursorPos;
                 inputData.cursorPos = strings.builder_len(input^);
                 ncure.moveCursor_right(inputData.cursorPos - prevCursor);
-            } else if ncure.Input(data) == ncure.Input.DELETE {
+            } else if ncure.isDelete(data) {
                 // TODO: There's a bug when pressing Delete on first character in a single character buffer - the cursor will move back one when it shouldn't.
                 if len(input.buf) <= 0 || inputData.cursorPos >= strings.builder_len(input^) do continue;
 
                 prev_before := string(input.buf[:inputData.cursorPos]);
                 //prev_after := strings.clone(string(input.buf[inputData.cursorPos:]), context.temp_allocator);
                 prev_after := string(input.buf[inputData.cursorPos + 1:]);
-                strings.reset_builder(input);
+                strings.builder_reset(input);
                 strings.write_string(input, prev_before);
                 strings.write_string(input, prev_after);
 
@@ -204,7 +205,7 @@ cliInput :: proc(input: ^strings.Builder, inputData: ^InputData) {
             if inputData.cursorPos < strings.builder_len(input^) {
                 prev_before := string(input.buf[:inputData.cursorPos]);
                 prev_after := strings.clone(string(input.buf[inputData.cursorPos:]), context.temp_allocator);
-                strings.reset_builder(input);
+                strings.builder_reset(input);
                 strings.write_string(input, prev_before);
                 strings.write_byte(input, data);
                 strings.write_string(input, prev_after);

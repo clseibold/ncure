@@ -5,17 +5,19 @@ import ncure ".."
 import "core:strconv"
 import "core:time"
 import "core:fmt"
+import "core:os"
 
 main :: proc() {
 	ncure.initializeTerminal();
 	ncure.enableVT100Mode();
 
 	ncure.disableEcho(false);
-	defer ncure.enableEcho();
+	defer ncure.enableEcho(); // Re-enable echo before exiting main proc.
 
 	itoa_buf: [129]byte;
 	termSize := ncure.getTermSize();
 
+	
 	{
 		ncure.clearScreen();
 		ncure.setCursor_topleft();

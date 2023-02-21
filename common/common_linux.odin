@@ -1,7 +1,16 @@
-import ncure_common
+package ncure_common
 
 import "core:c"
+import "core:os"
+import "core:strings"
+import "core:strconv"
+import "core:fmt"
 foreign import libc "system:c"
+
+@(private)
+_batch :: false;
+
+GET_CURSOR :: "\e[6n";
 
 // -- termios stuff --
 cc_t :: distinct c.uchar;
@@ -17,7 +26,7 @@ termios :: struct {
 	c_line: cc_t,
 	c_cc: [NCCS]cc_t,    // Special characters
 	c_ispeed: speed_t,  // Input speed
-	c_ospeed: speed_t   // Output speed
+	c_ospeed: speed_t,   // Output speed
 }
 
 
@@ -254,8 +263,8 @@ getCursor :: proc() -> CursorPos {
 	}
 	
 	// Get response
-	response := strings.make_builder();
-	defer strings.destroy_builder(&response);
+	response := strings.builder_make();
+	defer strings.builder_destroy(&response);
 	data: byte;
 	for {
 		data = getch();

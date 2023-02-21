@@ -142,7 +142,7 @@ getSequence_set :: proc(x, y: int, b: ^strings.Builder = nil) -> string {
 	if b == nil {
 		// Create new builder for this sequence only if not
 		// being added to a pre-existing builder.
-		builder_new = strings.make_builder();
+		builder_new = strings.builder_make();
 		builder = &builder_new;
 	}
 	
@@ -151,13 +151,13 @@ getSequence_set :: proc(x, y: int, b: ^strings.Builder = nil) -> string {
 	if y == 1 do strings.write_string(builder, "1;");
 	else {
 		strings.write_string(builder, strconv.itoa(buf[:], y));
-		strings.write_rune_builder(builder, ';');
+		strings.write_rune(builder, ';');
 	}
 	
 	if x == 1 do strings.write_string(builder, "1H");
 	else {
 		strings.write_string(builder, strconv.itoa(buf[:], x));
-		strings.write_rune_builder(builder, 'H');
+		strings.write_rune(builder, 'H');
 	}
 	
 	return strings.to_string(builder^);
@@ -177,7 +177,7 @@ getSequence_moveup :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	if b == nil {
 		// Create new builder for this sequence only if not
 		// being added to a pre-existing builder.
-		builder_new = strings.make_builder();
+		builder_new = strings.builder_make();
 		builder = &builder_new;
 	}
 	
@@ -185,7 +185,7 @@ getSequence_moveup :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	
 	buf: [129]byte;
 	strings.write_string(builder, strconv.itoa(buf[:], amt));
-	strings.write_rune_builder(builder, 'A');
+	strings.write_rune(builder, 'A');
 	
 	return strings.to_string(builder^);
 }
@@ -204,7 +204,7 @@ getSequence_movedown :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	if b == nil {
 		// Create new builder for this sequence only if not
 		// being added to a pre-existing builder.
-		builder_new = strings.make_builder();
+		builder_new = strings.builder_make();
 		builder = &builder_new;
 	}
 	
@@ -212,7 +212,7 @@ getSequence_movedown :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	
 	buf: [129]byte;
 	strings.write_string(builder, strconv.itoa(buf[:], amt));
-	strings.write_rune_builder(builder, 'B');
+	strings.write_rune(builder, 'B');
 	
 	return strings.to_string(builder^);
 }
@@ -231,7 +231,7 @@ getSequence_moveleft :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	if b == nil {
 		// Create new builder for this sequence only if not
 		// being added to a pre-existing builder.
-		builder_new = strings.make_builder();
+		builder_new = strings.builder_make();
 		builder = &builder_new;
 	}
 	
@@ -239,7 +239,7 @@ getSequence_moveleft :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	
 	buf: [129]byte;
 	strings.write_string(builder, strconv.itoa(buf[:], amt));
-	strings.write_rune_builder(builder, 'D');
+	strings.write_rune(builder, 'D');
 	
 	return strings.to_string(builder^);
 }
@@ -258,7 +258,7 @@ getSequence_moveright :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	if b == nil {
 		// Create new builder for this sequence only if not
 		// being added to a pre-existing builder.
-		builder_new = strings.make_builder();
+		builder_new = strings.builder_make();
 		builder = &builder_new;
 	}
 	
@@ -266,7 +266,7 @@ getSequence_moveright :: proc(amt: int, b: ^strings.Builder = nil) -> string {
 	
 	buf: [129]byte;
 	strings.write_string(builder, strconv.itoa(buf[:], amt));
-	strings.write_rune_builder(builder, 'C');
+	strings.write_rune(builder, 'C');
 	
 	return strings.to_string(builder^);
 }
