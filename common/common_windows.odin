@@ -68,7 +68,7 @@ getTermSize :: proc() -> TermSize {
     return TermSize { int(consoleInfo.srWindow.Right) - int(consoleInfo.srWindow.Left) + 1, int(consoleInfo.srWindow.Bottom) - int(consoleInfo.srWindow.Top) + 1 };
 }
 
-// TODO: When the linux version is fixed, move this back to ncure_windows.odin
+// TODO: When the linux version is fixed, move this back to ncure_windows.odin?
 // One is added to convert the cursor coordinates to the system used by ncure,
 // where (1, 1) is always top-left.
 getCursor :: proc() -> CursorPos {
